@@ -1,0 +1,12 @@
+fastapi[all]
+alembic
+SQLAlchemy
+asyncpg
+pillow
+pyjwt
+databases
+uvicorn
+passlib[bcrypt]
+python-jose[cryptography]
+gunicorn
+bcrypt

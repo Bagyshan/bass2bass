@@ -1,0 +1,4 @@
+venv
+.env
+.env-non-dev
+.env-local

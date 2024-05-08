@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - custom
+
+  app:
+    build: .
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: always
+    command: >
+      sh -c "/app/docker/app.sh"
+    networks:
+      - custom
+
+  nginx:
+    container_name: web
+    image: nginx
+    depends_on:
+      - app
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - custom
+
+volumes:
+  db_data:
+
+networks:
+  custom:
+    driver: bridge
